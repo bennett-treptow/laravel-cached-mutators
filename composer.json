@@ -17,6 +17,9 @@
       "email": "me@btreptow.com"
     }
   ],
+  "require": {
+    "php": "^7.0"
+  },
   "autoload": {
     "psr-4": {
       "CachedMutators\\": "src/"
@@ -24,7 +27,7 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "Tests\\": "tests/"
+      "CachedMutators\\Tests\\": "tests/"
     }
   },
   "require-dev": {

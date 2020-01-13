@@ -1,5 +1,5 @@
 <?php
-namespace Tests\Models;
+namespace CachedMutators\Tests\Models;
 
 use CachedMutators\HasCachedMutators;
 use Illuminate\Database\Eloquent\Model;

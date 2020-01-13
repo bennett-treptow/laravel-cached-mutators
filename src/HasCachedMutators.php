@@ -49,7 +49,7 @@ trait HasCachedMutators {
     public function clearCachedMutators($key = null){
         if($key === null){
             foreach(static::$cacheConfig as $key => $config){
-                $this->clearMutationCache($key);
+                $this->clearCachedMutators($key);
             }
             return $this;
         }

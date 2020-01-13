@@ -1,7 +1,7 @@
 <?php
-namespace Tests\Unit;
+namespace CachedMutators\Tests\Unit;
 
-use Tests\Models\TestModel;
+use CachedMutators\Tests\Models\TestModel;
 
 class CanCacheMutators extends \Orchestra\Testbench\TestCase {
     public function test_registers_mutators(){
@@ -17,7 +17,7 @@ class CanCacheMutators extends \Orchestra\Testbench\TestCase {
 
         $this->assertEquals($firstCall, $secondCall);
 
-        $model->clearMutationCache();
+        $model->clearCachedMutators();
         $this->assertNotEquals($firstCall, $model->random);
     }
 
