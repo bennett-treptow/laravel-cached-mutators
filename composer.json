@@ -1,0 +1,34 @@
+{
+  "name": "bennett-treptow/laravel-cached-mutators",
+  "description": "Cached model mutators",
+  "keywords": [
+    "cache",
+    "mutators"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/bennett-treptow/laravel-cached-mutators",
+  "support": {
+    "issues": "https://github.com/bennett-treptow/laravel-cached-mutators/issues",
+    "source": "https://github.com/bennett-treptow/laravel-cached-mutators"
+  },
+  "authors": [
+    {
+      "name": "Bennett Treptow",
+      "email": "me@btreptow.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "CachedMutators\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tests/"
+    }
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^8.0",
+    "orchestra/testbench": "^4.0"
+  }
+}
