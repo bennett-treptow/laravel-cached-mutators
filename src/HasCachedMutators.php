@@ -33,7 +33,7 @@ trait HasCachedMutators {
             }
             $value = parent::getAttributeValue($key);
             $cacheStore = Cache::store($store);
-            if (isset($config['ttl'])) {
+            if (isset($config['ttl']) && !empty($config['ttl'])) {
                 return $cacheStore->remember($cacheKey, $config['ttl'], function() use ($value){
                     return $value;
                 });
