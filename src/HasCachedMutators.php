@@ -12,7 +12,7 @@ trait HasCachedMutators {
             if(is_array($value)){
                 static::$cacheConfig[$key] = $value;
             } else {
-                static::$cacheConfig[$value] = ['store' => 'array'];
+                static::$cacheConfig[$value] = ['store' => null];
             }
         }
     }
