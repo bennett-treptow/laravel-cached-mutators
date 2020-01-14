@@ -24,7 +24,7 @@ class MyModel extends Model {
     use HasCachedMutators;
 
     //declare your auto cached attribute keys
-    protected static $cacheAttributes = [
+    protected $cacheAttributes = [
         'associated_stripe_customer'
     ];
 
@@ -56,7 +56,7 @@ class MyModel extends Model {
     use HasCachedMutators;
 
     //declare your auto cached attribute keys
-    protected static $cacheAttributes = [
+    protected $cacheAttributes = [
         'associated_stripe_customer' => [
             'store' => 'redis',
             'ttl' => null
@@ -110,7 +110,7 @@ class MyModel extends Model {
     }
 
     //declare your auto cached attribute keys
-    protected static $cacheAttributes = [
+    protected $cacheAttributes = [
         'associated_stripe_customer', //will receive redis as its store and ttl of 60
         'associated_payment_methods' => [
             'ttl' => 600 //will override the default specified above
