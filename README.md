@@ -1,4 +1,4 @@
-# Laravel Cached Mutators
+# Laravel Cached Mutators [![Actions Status](https://github.com/bennett-treptow/laravel-cached-mutators/workflows/Laravel/badge.svg)](https://github.com/bennett-treptow/laravel-cached-mutators/actions)
 
 This package provides a trait for your Eloquent models to automatically cache any mutators and attributes you choose. Good use cases for this trait are for expensive mutators that you only want to run once per request / certain time period and want to keep your mutator code free from any manual caching.
 
