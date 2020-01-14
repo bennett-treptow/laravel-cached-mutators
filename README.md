@@ -102,10 +102,10 @@ use CachedMutators\HasCachedMutators;
 class MyModel extends Model {
     use HasCachedMutators;
     
-    protected static function defaultCacheStore(){
+    public static function defaultCacheStore(){
         return 'redis';
     }
-    protected static function defaultCacheTTL(){
+    public static function defaultCacheTTL(){
         return 60;
     }
 
