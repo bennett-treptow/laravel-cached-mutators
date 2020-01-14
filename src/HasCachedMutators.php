@@ -5,35 +5,77 @@ use Illuminate\Support\Facades\Cache;
 
 trait HasCachedMutators {
     private static $cacheConfig = [];
+    public function getCacheConfig(){
+        return self::$cacheConfig;
+    }
+
+    public static function defaultCacheTTL(){
+        return null;
+    }
+    public static function defaultCacheStore(){
+        return null;
+    }
+
+    private function getCacheStoreForKey($key){
+        if(isset(static::$cacheConfig[$key])){
+            return Cache::store(static::$cacheConfig[$key]['store']);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * @param array $data
+     * @return array
+     */
+    private static function fillCacheConfig($data){
+        $defaultObj = [
+            'store' => static::defaultCacheStore(),
+            'ttl' => static::defaultCacheTTL()
+        ];
+        foreach($data as $key => $val){
+            $defaultObj[$key] = $val;
+        }
+        return $defaultObj;
+    }
 
     public static function bootHasCachedMutators(){
         $conf = static::$cacheAttributes;
         foreach($conf as $key => $value){
             if(is_array($value)){
-                static::$cacheConfig[$key] = $value;
+                static::$cacheConfig[$key] = static::fillCacheConfig($value);
             } else {
-                static::$cacheConfig[$value] = ['store' => null];
+                static::$cacheConfig[$value] = static::fillCacheConfig([]);
             }
         }
     }
 
-    protected function getAttributeCacheKeyName($key){
-        return self::class.'_'.$key;
+    /**
+     * @param $key
+     * @return string
+     */
+    public function getAttributeCacheKeyName($key){
+        $id = $this->getIncrementing() ? $this->getKey() : null;
+        return implode('_', [self::class, $id, $key]);
     }
 
+    /***
+     * @param $key
+     * @return mixed
+     * @throws \Psr\SimpleCache\InvalidArgumentException
+     */
     public function getAttributeValue($key) {
         if (isset(static::$cacheConfig[$key])) {
             //this key exists in the cache config
-
             $cacheKey = $this->getAttributeCacheKeyName($key);
             $config = self::$cacheConfig[$key];
-            $store = $config['store'] ?? null;
-            if (Cache::store($store)->has($cacheKey)) {
-                return Cache::store($store)->get($cacheKey);
+            $cacheStore = $this->getCacheStoreForKey($key);
+            if ($cacheStore->has($cacheKey)) {
+                return $cacheStore->get($cacheKey);
             }
             $value = parent::getAttributeValue($key);
-            $cacheStore = Cache::store($store);
-            if (isset($config['ttl']) && !empty($config['ttl'])) {
+
+            if (isset($config['ttl']) && !empty($config['ttl']) && $config['ttl'] !== null) {
                 return $cacheStore->remember($cacheKey, $config['ttl'], function() use ($value){
                     return $value;
                 });
@@ -43,9 +85,14 @@ trait HasCachedMutators {
                 });
             }
         }
+        //or just pass thru
         return parent::getAttributeValue($key);
     }
 
+    /**
+     * @param string|null $key
+     * @return $this
+     */
     public function clearCachedMutators($key = null){
         if($key === null){
             foreach(static::$cacheConfig as $key => $config){
@@ -53,9 +100,8 @@ trait HasCachedMutators {
             }
             return $this;
         }
-        $config = static::$cacheConfig[$key];
-        $store = $config['store'] ?? null;
-        Cache::store($store)->forget($this->getAttributeCacheKeyName($key));
+        $this->getCacheStoreForKey($key)
+            ->forget($this->getAttributeCacheKeyName($key));
         return $this;
     }
 }

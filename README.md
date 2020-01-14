@@ -90,10 +90,61 @@ class MyModel extends Model {
 }
 ```
 
+```php
+<?php
+use CachedMutators\HasCachedMutators;
+
+/**
+ * @property string $customer_id
+ * @property \Stripe\Customer $associated_stripe_customer
+ * @property \Stripe\Source[] $associated_payment_methods
+ */
+class MyModel extends Model {
+    use HasCachedMutators;
+    
+    protected static function defaultCacheStore(){
+        return 'redis';
+    }
+    protected static function defaultCacheTTL(){
+        return 60;
+    }
+
+    //declare your auto cached attribute keys
+    protected static $cacheAttributes = [
+        'associated_stripe_customer', //will receive redis as its store and ttl of 60
+        'associated_payment_methods' => [
+            'ttl' => 600 //will override the default specified above
+        ]
+    ];
+
+    /**
+    * @return \Stripe\Customer
+     */
+    public function getAssociatedStripeCustomer(){
+        //call to an external service such as Stripe
+        //this call will be proxied through the Cache
+        //and will only call the external service once
+
+        return \Stripe\Customer::retrieve($this->customer_id);
+    }  
+    
+    /** 
+     * @return \Stripe\Source[]
+     */
+    public function getAssociatedPaymentMethods(){
+        return \Stripe\Customer::allSources($this->customer_id, [
+            'object' => 'card', 
+            'limit' => 3
+        ]);
+    }
+}
+```
+
 The `$cacheAttributes` array can be configured to cache mutators per attribute by defining `store` and `ttl`. 
 
 By default, the `store` will follow your application's default cache store, which is usually the `file` store.
 Defining a `ttl` will call the cache repository's `remember` function, and making `ttl` null or not part of the array will use the cache repository's `rememberForever` function.
+You may also override the `defaultCacheStore()` and `defaultCacheTTL()` functions on your models to expedite the process of choosing where each attribute is cached.
 
 #### Clearing Cached Mutators
 Need to clear your cached mutators to get a fresh copy?
