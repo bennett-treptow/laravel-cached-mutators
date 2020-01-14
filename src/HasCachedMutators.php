@@ -55,8 +55,7 @@ trait HasCachedMutators {
      * @return string
      */
     public function getAttributeCacheKeyName($key){
-        $id = $this->getIncrementing() ? $this->getKey() : null;
-        return implode('_', [self::class, $id, $key]);
+        return implode('_', [self::class, $this->getKey(), $key]);
     }
 
     /***
