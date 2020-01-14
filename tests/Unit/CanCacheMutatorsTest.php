@@ -1,6 +1,7 @@
 <?php
 namespace CachedMutators\Tests\Unit;
 
+use CachedMutators\Tests\Models\ImplementationOfAbstractModel;
 use CachedMutators\Tests\Models\TestModel;
 
 class CanCacheMutatorsTest extends \Orchestra\Testbench\TestCase {
@@ -40,5 +41,17 @@ class CanCacheMutatorsTest extends \Orchestra\Testbench\TestCase {
 
         $this->assertNotSame($model->getAttributeCacheKeyName('random'), $model2->getAttributeCacheKeyName('random'));
         $this->assertNotSame($model->test, $model2->test);
+    }
+
+    public function test_abstract_model(){
+        $model = new ImplementationOfAbstractModel(['id' => 1]);
+        $this->assertEquals(ImplementationOfAbstractModel::class.'_1_test', $model->getAttributeCacheKeyName('test'));
+
+        $firstCall = $model->random;
+        $secondCall = $model->random;
+
+        $this->assertEquals($firstCall, $secondCall);
+        $model->clearCachedMutators();
+        $this->assertNotEquals($firstCall, $model->random);
     }
 }
